@@ -23,13 +23,22 @@ TEMPLATES_DIR = BASE_DIR / 'templates'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p)j@-m_rzfjf_o%l%qpivt*mf#_@2qun$8o4bf2j%w%v+6561z'
+# Use environment variable for SECRET_KEY with fallback
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY', 
+    'django-insecure-p)j@-m_rzfjf_o%l%qpivt*mf#_@2qun$8o4bf2j%w%v+6561z'
+)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Use environment variable for DEBUG with fallback
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# Inproduction make the above debug to False or use the .env to make it DEBUG=false
+
+# Use environment variable for ALLOWED_HOSTS with fallback
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS', 
+    'localhost,127.0.0.1'
+).split(',')
 
 
 # Application definition
@@ -79,12 +88,23 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Use environment variable for database with fallback to SQLite
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -145,3 +165,23 @@ DJANGO_VITE = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security settings for production
+if not DEBUG:
+    # Security middleware settings
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # HTTPS settings
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Cookie security
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # Add security middleware
+    MIDDLEWARE.insert(1, 'django.middleware.security.SecurityMiddleware')

@@ -1,0 +1,97 @@
+# docker-compose.yml
+
+# Build and Run
+# docker compose -f docker-compose.yml -p mikeintosh-xforms up -d
+
+#Check Running
+# docker compose -p mikeintosh-xforms ps
+#Log
+# docker compose -p mikeintosh-xforms logs -f
+# STOP and Remove
+# docker compose -f docker-compose.yml -p mikeintosh-xforms down -v
+
+#version: '3.8'
+
+services:
+  # Django backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mikeintosh_xforms_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+      - static_volume:/app/staticfiles
+    environment:
+      - DEBUG=${DEBUG:-False}
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - DATABASE_URL=sqlite:///db.sqlite3
+    depends_on:
+      - db
+    networks:
+      - xforms-network
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+
+  # PostgreSQL database
+  db:
+    image: postgres:15-alpine
+    container_name: mikeintosh_xforms_db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-xforms_db}
+      - POSTGRES_USER=${POSTGRES_USER:-xforms_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-xforms_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - xforms-network
+    ports:
+      - "5432:5432"
+
+  # Vue frontend (production build)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mikeintosh_xforms_frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - xforms-network
+
+  # Alternative: Frontend dev server (if you want hot reload in Docker)
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: mikeintosh_xforms_frontend_dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - xforms-network
+    command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  postgres_data:
+  media_volume:
+  static_volume:
+
+networks:
+  xforms-network:
+    driver: bridge

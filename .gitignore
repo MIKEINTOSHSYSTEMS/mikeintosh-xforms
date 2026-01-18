@@ -25,6 +25,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Enviroment
+*.env
+
 # Example Static Files and xlsx templates
 forms/static/*.xlsx
 forms/static/*.xls
