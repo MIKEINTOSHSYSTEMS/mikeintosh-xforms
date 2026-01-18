@@ -35,5 +35,5 @@ db.sqlite3
 *.code-workspace
 
 media/
-
+temp/*.txt
 z.txt
