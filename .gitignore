@@ -36,4 +36,5 @@ db.sqlite3
 
 media/
 temp/*.txt
+temp/*.md
 z.txt
