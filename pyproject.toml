@@ -1,0 +1,27 @@
+[project]
+name = "Django-xforms"
+version = "0.1.0"
+description = "Integration of odk web-forms with a Django+Vue app"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2.7",
+    "django-ninja>=1.4.3",
+    "django-vite>=3.1.0",
+    "pyxform>=4.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "playwright>=1.55.0",
+    "pytest>=8.4.2",
+    "pytest-django>=4.11.1",
+    "pytest-playwright>=0.7.1",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+markers = [
+    "e2e: end-to-end browser tests using Playwright",
+]

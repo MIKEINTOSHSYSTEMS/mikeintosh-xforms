@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+input,
+textarea {
+    /* ODK forces this to none in packages/web-forms/src/assets/styles/reset.scss, so we reset it here */
+	border: 1px solid;
+}
