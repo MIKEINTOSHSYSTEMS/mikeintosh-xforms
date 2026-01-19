@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <div class="app-shell">
     <header class="app-header">
@@ -9,6 +5,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/forms" class="app-title">MIKEINTOSH XForms</RouterLink>
         <nav class="app-nav">
           <RouterLink to="/forms" class="app-nav__link">Forms</RouterLink>
+          <RouterLink to="/xlsplay" class="app-nav__link">XLSPlay</RouterLink>
           <a href="/admin" class="app-nav__link" target="_blank" rel="noopener">Admin</a>
         </nav>
       </div>
@@ -18,6 +15,10 @@ import { RouterLink, RouterView } from 'vue-router'
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+</script>
 
 <style scoped>
 .app-shell {

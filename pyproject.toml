@@ -8,7 +8,7 @@ dependencies = [
     "django>=5.2.7",
     "django-ninja>=1.4.3",
     "django-vite>=3.1.0",
-    "pyxform>=4.0.0",
+    "pyxform>=4.2.0",
     "dj-database-url>=3.1.0",
     # "psycopg2-binary>=2.9.10",   # Remove for SQLite
 ]

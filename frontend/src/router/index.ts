@@ -29,6 +29,11 @@ const router = createRouter({
       props: true,
       component: () => import('../views/FormSubmitView.vue'),
     },
+    {
+      path: '/xlsplay',
+      name: 'xlsplay',
+      component: () => import('../views/XLSPlayView.vue'),
+    },
   ],
 })
 

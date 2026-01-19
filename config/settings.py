@@ -146,7 +146,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # For collectstatic command
 
-STATICFILES_DIRS = []
+# Add frontend public directory for xlsform_examples
+STATICFILES_DIRS = [
+    FRONTEND_DIR / 'public',
+]
+
 if FRONTEND_DIST_DIR.exists():
     STATICFILES_DIRS.append(FRONTEND_DIST_DIR)
 

@@ -1,0 +1,15 @@
+.buttons-container {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 1rem;
+  justify-content: start;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .buttons-container {
+    grid-template-columns: repeat(1, auto);
+  }
+}

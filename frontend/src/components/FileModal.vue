@@ -1,0 +1,110 @@
+<template>
+  <el-dialog v-model="dialogVisible" title="Load an XLSForm">
+    You can either upload an XLSForm, or select one from our library of examples. Files must have sheets survey,
+    choices, and settings.
+    <div class="buttons-container">
+      <div>
+        <el-upload
+          v-model:file-list="fileList"
+          :show-file-list="false"
+          :auto-upload="false"
+          accept=".xlsx, .xls"
+          @change="handleFileUpload"
+        >
+          <el-button type="success" plain>
+            <el-icon class="el-icon--left"><Upload /></el-icon>
+            Upload File
+          </el-button>
+        </el-upload>
+      </div>
+      <div>OR</div>
+      <div>
+        <el-select
+          v-model="selectedFile"
+          id="example-file-select"
+          class="m-2"
+          placeholder="Select an example file"
+          @change="handleSelectChange"
+        >
+          <el-option value="starter.xlsx">starter.xlsx</el-option>
+          <el-option value="anc_visit.xlsx">anc_visit.xlsx</el-option>
+          <el-option value="baseline_household_survey.xlsx">baseline_household_survey.xlsx</el-option>
+          <el-option value="fatal_injury_surveillance_form.xlsx">fatal_injury_surveillance_form.xlsx</el-option>
+          <el-option value="household_water_survey.xlsx">household_water_survey.xlsx</el-option>
+          <el-option value="monthly_project_report.xlsx">monthly_project_report.xlsx</el-option>
+          <el-option value="shelter_material_survey.xlsx">shelter_material_survey.xlsx</el-option>
+          <el-option value="spraying_survey.xlsx">spraying_survey.xlsx</el-option>
+        </el-select>
+      </div>
+    </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">Done</el-button>
+      </span>
+    </template>
+  </el-dialog>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { getSheetsData } from '../utils';
+import { useSpreadsheetStore } from '../spreadsheetStore';
+
+const spreadsheet = useSpreadsheetStore();
+
+const dialogVisible = ref(true);
+const fileList = ref([]);
+const selectedFile = ref(null);
+
+const handleFileUpload = async function (file) {
+  if (!file?.raw) return;
+  const reader = new FileReader();
+  reader.onload = async evt => {
+    const bstr = evt.target.result;
+    const { sheetsData, sheetColumnWidths } = getSheetsData(bstr);
+    spreadsheet.setData(sheetsData);
+    spreadsheet.setColWidths(sheetColumnWidths);
+  };
+  reader.readAsArrayBuffer(file.raw);
+  dialogVisible.value = false;
+};
+
+const handleSelectChange = async function (fileName) {
+  selectedFile.value = fileName;
+  if (!fileName) return;
+
+  try {
+    // Use relative path since static files are served from Django
+    const response = await fetch(`/xlsform_examples/${fileName}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const file = new File([blob], fileName, {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const reader = new FileReader();
+    reader.onload = async evt => {
+      const bstr = evt.target.result;
+      const { sheetsData, sheetColumnWidths } = getSheetsData(bstr);
+      spreadsheet.setData(sheetsData);
+      spreadsheet.setColWidths(sheetColumnWidths);
+    };
+    reader.readAsArrayBuffer(file);
+    dialogVisible.value = false;
+  } catch (error) {
+    console.error('Error loading example file:', error);
+    alert(`Failed to load example file: ${error.message}`);
+  }
+};
+</script>
+
+<style scoped>
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 0;
+  align-items: center;
+}
+</style>

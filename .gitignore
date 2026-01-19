@@ -29,6 +29,9 @@ wheels/
 *.env
 
 # Example Static Files and xlsx templates
+frontend/public/xmlform_examples/*.xml
+#frontend/public/xlsform_examples/*.xlsx
+
 forms/static/*.xlsx
 forms/static/*.xls
 
