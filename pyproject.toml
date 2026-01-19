@@ -1,7 +1,7 @@
 [project]
-name = "Django-xforms"
-version = "0.1.0"
-description = "Integration of odk web-forms with a Django+Vue app"
+name = "MIKEINTOSH-XForms"
+version = "0.1.7"
+description = "A full-stack web application for creating, managing, and submitting ODK XForms with Django backend and Vue.js frontend, integrated with ODK Web Forms engine for form rendering and submission"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
