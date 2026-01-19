@@ -77,7 +77,7 @@ A full-stack web application for creating, managing, and submitting ODK XForms w
 ## 📁 Project Structure
 
 ```
-django-xforms-main/
+mikeintosh-xforms/
 ├── .env.example                    # Environment variables template
 ├── .dockerignore                   # Docker ignore patterns
 ├── docker-compose.yml              # Docker Compose configuration
@@ -239,7 +239,7 @@ docker-compose --version
 
 ```bash
 git clone <repository-url>
-cd django-xforms-main
+cd mikeintosh-xforms
 
 # Create virtual environment and install Python dependencies
 uv venv
