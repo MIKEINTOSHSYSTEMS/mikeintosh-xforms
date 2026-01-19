@@ -14,16 +14,20 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     postgresql-client \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install UV for Python dependency management
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+# Install UV
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Add UV to PATH
+ENV PATH="/root/.local/bin:${PATH}"
 
 # Copy pyproject.toml and uv.lock
 COPY pyproject.toml uv.lock ./
 
 # Install Python dependencies using UV
-RUN uv sync --frozen --no-cache
+RUN uv pip install --system -r pyproject.toml
 
 # Copy the rest of the application
 COPY . .
