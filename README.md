@@ -238,7 +238,7 @@ docker-compose --version
 1. **Clone and Setup**
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/MIKEINTOSHSYSTEMS/mikeintosh-xforms.git
 cd mikeintosh-xforms
 
 # Create virtual environment and install Python dependencies
